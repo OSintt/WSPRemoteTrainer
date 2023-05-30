@@ -62,7 +62,7 @@ const listen = async () => {
           date: new Date()
         });
         await newMsg.save();
-        if (filter) return;
+        if (client.eliminar && filter) return;
       }
       if (filter) {
         client.eliminar = true;
@@ -91,14 +91,16 @@ const training = async (req, res) => {
     }
   }
   chat();
-  listen();
+  const listenPromise = new Promise((resolve) => {
+    listen();
+    resolve();
+  });
+  await listenPromise;
   res.send({
     status: 200,
     message: `La máquina con el ID ${process.env.ID} está funcionando...`,
   });
-  setInterval(async () => {
-    chat();
-  }, 60 * 1000);
+  setInterval(chat(), 60 * 1000);
 };
 
 export { training };
