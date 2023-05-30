@@ -5,7 +5,7 @@ import morgan from "morgan";
 const app = express();
 
 //settings
-app.set("port", process.env.PORT || 3001);
+app.set("port", process.env.PORT || 3000);
 //middleware
 app.use(morgan("dev"));
 app.use(

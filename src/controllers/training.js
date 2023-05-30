@@ -69,7 +69,7 @@ const listen = async () => {
 
 const training = async (req, res) => {
   async function chat() {
-    responses = await arr();
+    const responses = await arr();
     try {
       const response = await restAPI.message.sendMessage(
         process.env.GROUP_ID,

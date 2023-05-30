@@ -17,4 +17,4 @@ const NumberSchema = new Schema({
   causa: String,
 });
 
-export default model(NumberSchema, "Number");
+export default model("Number", NumberSchema);

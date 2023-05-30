@@ -7,4 +7,4 @@ const MessageSchema = new Schema({
   content: String
 });
 
-export default model(MessageSchema, 'Message');
+export default model('Message', MessageSchema);
