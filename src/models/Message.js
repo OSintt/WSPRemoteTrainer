@@ -4,7 +4,8 @@ const MessageSchema = new Schema({
     type: Types.ObjectID,
     ref: 'Numbers'
   },
-  content: String
+  content: String,
+  date: Date
 });
 
 export default model('Message', MessageSchema);

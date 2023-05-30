@@ -1,6 +1,7 @@
 import whatsAppClient from "@green-api/whatsapp-api-client";
 import Number from "../models/Number";
-import arr from './arr';
+import Message from "../models/Message";
+import arr from "./arr";
 
 const restAPI = whatsAppClient.restAPI({
   idInstance: process.env.ID,
@@ -54,7 +55,15 @@ const listen = async () => {
       const msg = body.messageData.textMessageData.textMessage;
       const filter = msg == 2 || msg == 3 || msg == 4;
       await (freqAnsw[msg] || freqAnsw["none"])();
-      if (client.eliminar && filter) return;
+      if (client) {
+        const newMsg = new Message({
+          author: client._id,
+          content: msg,
+          date: new Date()
+        });
+        await newMsg.save();
+        if (filter) return;
+      }
       if (filter) {
         client.eliminar = true;
         client.causa = msg;
@@ -92,6 +101,4 @@ const training = async (req, res) => {
   }, 60 * 1000);
 };
 
-export {
-    training
-};
+export { training };
