@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/index",
     "build:server": "swc src -w --out-dir dist",
+    "build": "swc src --out-dir dist",
     "dev": "nodemon --watch \"dist/**/*\" -e js ./dist/index.js"
   },
   "keywords": [],
