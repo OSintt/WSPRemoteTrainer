@@ -13,6 +13,7 @@ const checkKey = async (req, res, next) => {
       status: 401,
       message: "La API Key que proporcionaste es inválida",
     });
+  req.key = verifiedKey;
   return next();
 };
 

@@ -14,6 +14,7 @@ const NumberSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  email: String,
   causa: String,
 });
 
