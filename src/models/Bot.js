@@ -1,24 +1,30 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
 const BotSchema = new Schema({
   l_active: {
     type: Boolean,
-    default: false
+    default: false,
   },
   t_active: {
     type: Boolean,
-    default: false
+    default: false,
   },
   instance_id: {
     unique: true,
     type: String,
-    required: true
+    required: true,
   },
+  messages: [
+    {
+      type: Types.ObjectId,
+      ref: "Message",
+    },
+  ],
   n: {
     required: true,
     unique: true,
-    type: Number
-  }
+    type: Number,
+  },
 });
 
-export default model('Bot', BotSchema);
+export default model("Bot", BotSchema);

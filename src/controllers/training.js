@@ -69,7 +69,9 @@ const listen = async (req, res) => {
           content: msg,
           date: new Date(),
         });
-        await newMsg.save();
+        const savedMsg = await newMsg.save();
+        bot.messages.push(savedMsg._id);
+        await bot.save();
         if (filter) {
           if (client.eliminar) return;
           client.eliminar = true;
