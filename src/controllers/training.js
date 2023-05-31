@@ -1,8 +1,10 @@
 import whatsAppClient from "@green-api/whatsapp-api-client";
 import Numbers from "../models/Number";
+import ApiKey from '../models/ApiKey';
 import Message from "../models/Message";
 import Bot from "../models/Bot";
 import arr from "./arr";
+import { CronJob } from 'cron';
 
 const questions = [
   {
@@ -96,16 +98,21 @@ const listen = async (req, res) => {
     bot
   });
 };
+
 let interval;
+
 const training = async (req, res) => {
+  const { key } = req;
   const bot = await Bot.findOne({ instance_id: process.env.ID });
   if (bot.t_active) {
     bot.t_active = false;
     await bot.save();
-    clearInterval(interval);
     return res.json({status: 200, message: `La máquina con el ID ${process.env.ID} dejó de entrenar...`})
   }
   async function chat() {
+    const checkBot = await Bot.findOne({ instance_id: process.env.ID });
+    if (!checkBot.t_active) return;
+    const { time } = await ApiKey.findOne({ key });
     const responses = await arr();
     try {
       const response = await restAPI.message.sendMessage(
@@ -120,13 +127,12 @@ const training = async (req, res) => {
   }
   bot.t_active = true;
   await bot.save();
-  chat();
+  const job = new CronJob(`0 ${time.start}-${time.finish} * * *`, chat, null, true, 'GMT-5');
   res.send({
     status: 200,
     message: `La máquina con el ID ${process.env.ID} está entrenando...`,
     bot
   });
-  interval = setInterval(chat, 60 * 1000);
 };
 
 export { training, listen };

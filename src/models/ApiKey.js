@@ -5,6 +5,10 @@ const KeySchema = new Schema({
     type: String,
     required: true,
     unique: true
+  },
+  time: {
+    start: Number,
+    finish: Number
   }
 });
 
