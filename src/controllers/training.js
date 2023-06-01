@@ -107,13 +107,14 @@ const training = async (req, res) => {
     await bot.save();
     return res.json({status: 200, message: `La máquina con el ID ${process.env.ID} dejó de entrenar...`})
   }
-  let time;
+  let time = { start: 10, finish: 22 };
   async function chat() {
     const checkBot = await Bot.findOne({ instance_id: process.env.ID });
     if (!checkBot.t_active) return;
     const responses = await arr();
     try {
-      time = await ApiKey.findOne({ key }).time;
+      const foundKey = await ApiKey.findOne({ key });
+      time = foundKey.time;
       const response = await restAPI.message.sendMessage(
         process.env.GROUP_ID,
         null,
