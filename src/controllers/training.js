@@ -3,8 +3,8 @@ import Numbers from "../models/Number";
 import ApiKey from '../models/ApiKey';
 import Message from "../models/Message";
 import Bot from "../models/Bot";
-import arr from "./arr";
 import { CronJob } from 'cron';
+import Response from "../models/Response";
 
 const questions = [
   {
@@ -107,7 +107,7 @@ const training = async (req, res) => {
     await bot.save();
     return res.json({status: 200, message: `La máquina con el ID ${process.env.ID} dejó de entrenar...`})
   }
-  const responses = await arr();
+  const responses = await Response.find();
   async function chat() {
     const checkBot = await Bot.findOne({ instance_id: process.env.ID });
     if (!checkBot.t_active) return;
@@ -119,7 +119,7 @@ const training = async (req, res) => {
       const response = await restAPI.message.sendMessage(
         process.env.GROUP_ID,
         null,
-        responses[Math.floor(Math.random() * responses.length)]
+        responses[Math.floor(Math.random() * responses.length)].content
       );
       console.log(response);
     } catch (e) {
