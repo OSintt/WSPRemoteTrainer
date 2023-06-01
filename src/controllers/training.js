@@ -107,14 +107,15 @@ const training = async (req, res) => {
     await bot.save();
     return res.json({status: 200, message: `La máquina con el ID ${process.env.ID} dejó de entrenar...`})
   }
-  let time = { start: 10, finish: 22 };
+  const responses = await arr();
   async function chat() {
     const checkBot = await Bot.findOne({ instance_id: process.env.ID });
     if (!checkBot.t_active) return;
-    const responses = await arr();
     try {
-      const foundKey = await ApiKey.findOne({ key });
-      time = foundKey.time;
+      const foundKey = await ApiKey.findOne({ key: key.key });
+      const time = foundKey.time;
+      const now = new Date().getHours();
+      if (now > time.finish || now < time.start) return;
       const response = await restAPI.message.sendMessage(
         process.env.GROUP_ID,
         null,
@@ -127,7 +128,7 @@ const training = async (req, res) => {
   }
   bot.t_active = true;
   await bot.save();
-  const job = new CronJob(`0 ${time.start}-${time.finish} * * *`, chat, null, true, 'America/Bogota');
+  const job = new CronJob(`0 * * * * *`, chat, null, true, 'America/Bogota');
   job.start();
   res.send({
     status: 200,
