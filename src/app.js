@@ -2,6 +2,10 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import axios from 'axios';
+import ApiKey from "./models/ApiKey";
+const key = await ApiKey.find();
+axios.defaults.headers.common['api-key'] = key[0].key;
 const app = express();
 
 //settings
