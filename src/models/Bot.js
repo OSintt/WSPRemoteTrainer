@@ -20,6 +20,13 @@ const BotSchema = new Schema({
       ref: "Message",
     },
   ],
+  numbers: [
+    {
+      unique: true,
+      type: Types.ObjectId,
+      ref: "Number",
+    },
+  ],
   n: {
     required: true,
     unique: true,

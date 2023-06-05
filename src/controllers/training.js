@@ -1,10 +1,14 @@
 import whatsAppClient from "@green-api/whatsapp-api-client";
 import Numbers from "../models/Number";
-import ApiKey from '../models/ApiKey';
+import ApiKey from "../models/ApiKey";
 import Message from "../models/Message";
 import Bot from "../models/Bot";
-import { CronJob } from 'cron';
+import { CronJob } from "cron";
 import Response from "../models/Response";
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 const questions = [
   {
@@ -38,6 +42,38 @@ const restAPI = whatsAppClient.restAPI({
   apiTokenInstance: process.env.API_KEY,
 });
 
+const campaign = async (req, res) => {
+  const { msg, time } = req.body;
+  if (!msg || !time || isNaN(time))
+    return res.status(400).json({
+      status: 400,
+      message: "Por favor, ingrese los parámetros correctamente",
+    });
+  const bot = await Bot.findOne({ instance_id: process.env.ID }).populate(
+    "numbers"
+  );
+  res.json({
+    status: 200,
+    message: `Campaña haciéndose a ${numbers.length} números desde la instancia de bot con el ID ${process.env.ID}`,
+  });
+  for (let number of bot.numbers) {
+    try {
+      number = number.telefono.replace("593", "");
+      if (!number.startsWith(0)) {
+        number = "0".concat(number);
+      }
+      const response = await restAPI.message.sendMessage(
+        "593" + number + "@c.us",
+        null
+      );
+      console.log(response);
+      sleep(time);
+    } catch (e) {
+      console.log("Ha ocurrido un error inesperado", e);
+    }
+  }
+};
+
 const listen = async (req, res) => {
   const bot = await Bot.findOne({ instance_id: process.env.ID });
   await restAPI.webhookService.startReceivingNotifications();
@@ -45,7 +81,11 @@ const listen = async (req, res) => {
     bot.l_active = false;
     await bot.save();
     restAPI.webhookService.stopReceivingNotifications();
-    return res.json({status: 200, message: `La máquina con el ID ${process.env.ID} dejó de receptar notificaciones`, bot});
+    return res.json({
+      status: 200,
+      message: `La máquina con el ID ${process.env.ID} dejó de receptar notificaciones`,
+      bot,
+    });
   }
   bot.l_active = true;
   await bot.save();
@@ -95,7 +135,7 @@ const listen = async (req, res) => {
   res.send({
     status: 200,
     message: `La máquina con el ID ${process.env.ID} está receptando notificaciones...`,
-    bot
+    bot,
   });
 };
 
@@ -105,7 +145,10 @@ const training = async (req, res) => {
   if (bot.t_active) {
     bot.t_active = false;
     await bot.save();
-    return res.json({status: 200, message: `La máquina con el ID ${process.env.ID} dejó de entrenar...`})
+    return res.json({
+      status: 200,
+      message: `La máquina con el ID ${process.env.ID} dejó de entrenar...`,
+    });
   }
   const responses = await Response.find();
   async function chat() {
@@ -128,13 +171,13 @@ const training = async (req, res) => {
   }
   bot.t_active = true;
   await bot.save();
-  const job = new CronJob(`0 * * * * *`, chat, null, true, 'America/Bogota');
+  const job = new CronJob(`0 * * * * *`, chat, null, true, "America/Bogota");
   job.start();
   res.send({
     status: 200,
     message: `La máquina con el ID ${process.env.ID} está entrenando...`,
-    bot
+    bot,
   });
 };
 
-export { training, listen };
+export { training, listen, campaign};
