@@ -140,7 +140,7 @@ const listen = async (req, res) => {
 };
 
 const training = async (req, res) => {
-  //const { key } = req;
+  const { key } = req;
   const bot = await Bot.findOne({ instance_id: process.env.ID });
   if (bot.t_active) {
     bot.t_active = false;
@@ -155,7 +155,7 @@ const training = async (req, res) => {
     const checkBot = await Bot.findOne({ instance_id: process.env.ID });
     if (!checkBot.t_active) return;
     try {
-      //const foundKey = await ApiKey.findOne({ key: key.key });
+      const foundKey = await ApiKey.findOne({ key: key.key });
       const time = { start: 10, finish: 22 };
       const now = new Date().getHours();
       if (now > time.finish || now < time.start) return;
