@@ -7,6 +7,7 @@ const app = express();
 
 //settings
 app.set("port", process.env.PORT || 3000);
+app.set("id", process.env.ID)
 //middleware
 app.use(morgan("dev"));
 app.use(
