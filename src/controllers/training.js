@@ -37,10 +37,16 @@ const initialRes = `Buenos días, soy un servicio de ayuda automático.\nPara m�
   .map((q, i) => `[${i + 1}] ${q.q}`)
   .join("\n")}`;
 
-const restAPI = whatsAppClient.restAPI({
-  idInstance: process.env.ID,
-  apiTokenInstance: process.env.API_KEY,
-});
+let restAPI;
+async function connect() {
+  const bot = await Bot.findOne({ instance_id: process.env.ID });
+
+  restAPI = whatsAppClient.restAPI({
+    idInstance: process.env.ID,
+    apiTokenInstance: bot.api_key,
+  });
+}
+connect();
 
 const campaign = async (req, res) => {
   const { msg, time } = req.body;
@@ -160,7 +166,7 @@ const training = async (req, res) => {
       const now = new Date().getHours();
       if (now > time.finish || now < time.start) return;
       const response = await restAPI.message.sendMessage(
-        process.env.GROUP_ID,
+        bot.group_id,
         null,
         responses[Math.floor(Math.random() * responses.length)].content
       );
@@ -180,4 +186,4 @@ const training = async (req, res) => {
   });
 };
 
-export { training, listen, campaign};
+export { training, listen, campaign };

@@ -14,6 +14,19 @@ const BotSchema = new Schema({
     type: String,
     required: true,
   },
+  api_key: {
+    unique: true,
+    type: String,
+    required: true
+  },
+  group_id: {
+    type: String,
+    default: '120363139133672481@g.us'
+  },
+  phone: {
+    type: String,
+    unique: true
+  },
   messages: [
     {
       type: Types.ObjectId,
@@ -22,16 +35,10 @@ const BotSchema = new Schema({
   ],
   numbers: [
     {
-      unique: true,
       type: Types.ObjectId,
       ref: "Number",
     },
   ],
-  n: {
-    required: true,
-    unique: true,
-    type: Number,
-  },
 });
 
-export default model("Bot", BotSchema);
+export default model("Robot", BotSchema);
