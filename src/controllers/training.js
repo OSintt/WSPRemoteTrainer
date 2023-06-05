@@ -177,7 +177,7 @@ const training = async (req, res) => {
   }
   bot.t_active = true;
   await bot.save();
-  const job = new CronJob(`0 * * * * *`, chat, null, true, "America/Bogota");
+  const job = new CronJob(`*/21 * * * *`, chat, null, true, "America/Bogota");
   job.start();
   res.send({
     status: 200,
