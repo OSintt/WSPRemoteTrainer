@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@green-api/whatsapp-api-client": "^0.3.35",
+    "@green-api/whatsapp-api-client": "^0.4.2",
     "axios": "^1.4.0",
     "cors": "^2.8.5",
     "cron": "^2.3.1",
